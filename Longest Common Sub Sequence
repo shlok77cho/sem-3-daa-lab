@@ -1,0 +1,53 @@
+#include<stdio.h>
+int max(int a, int b){if(a>b){return a;}else{return b;}}
+
+int lcsOf3(char X[], char Y[], char Z[], int m, int n, int o){
+	
+	//write your code here...
+	
+int i, j, k;
+    // 3D DP array to store lengths of longest common subsequence for three strings
+    // Given MAX_LENGTH is 100, we size it slightly larger to prevent out-of-bounds
+    static int dp[105][105][105];
+
+    // Remove trailing newline characters read by fgets if present
+    int lenX = strlen(X);
+    if (lenX > 0 && X[lenX - 1] == '\n') X[--lenX] = '\0';
+    int lenY = strlen(Y);
+    if (lenY > 0 && Y[lenY - 1] == '\n') Y[--lenY] = '\0';
+    int lenZ = strlen(Z);
+    if (lenZ > 0 && Z[lenZ - 1] == '\n') Z[--lenZ] = '\0';
+
+    // Build the 3D DP table in a bottom-up manner
+    for (i = 0; i <= lenX; i++) {
+        for (j = 0; j <= lenY; j++) {
+            for (k = 0; k <= lenZ; k++) {
+                if (i == 0 || j == 0 || k == 0) {
+                    dp[i][j][k] = 0;
+                } else if (X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1]) {
+                    dp[i][j][k] = dp[i - 1][j - 1][k - 1] + 1;
+                } else {
+                    int opt1 = dp[i - 1][j][k];
+                    int opt2 = dp[i][j - 1][k];
+                    int opt3 = dp[i][j][k - 1];
+                    dp[i][j][k] = max(max(opt1, opt2), opt3);
+                }
+            }
+        }
+    }
+
+    return dp[lenX][lenY][lenZ];
+	
+	
+	
+	
+}
+
+int main()
+{	char x[MAX_LENGTH], y[MAX_LENGTH],z[MAX_LENGTH];
+    fgets(x, MAX_LENGTH, stdin);
+    fgets(y, MAX_LENGTH, stdin);
+    fgets(z, MAX_LENGTH, stdin);
+	printf("%d", lcsOf3(x, y, z, strlen(x), strlen(y), strlen(z)));
+	
+	return 0;
